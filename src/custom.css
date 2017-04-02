@@ -1,0 +1,55 @@
+.standard-margin {
+  margin: 10px;
+}
+
+.contact-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.contact-list li {
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.contact-list a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.contact-list a:visited {
+  color: inherit;
+}
+
+.contact-list a:hover {
+  color: inherit;
+}
+
+.contact-icon {
+  width: 22px;
+  text-align: center;
+  margin-right: 8px;
+}
+
+.ol-contact {
+  padding-left: 20px;
+  counter-reset: list;
+}
+
+.ol-contact > li {
+  list-style: none;
+}
+
+.ol-contact > li:before {
+  counter-increment: list;
+  content: counter(list, lower-alpha) ')';
+  display: inline-block;
+  width: 20px;
+}
+
+.logs-detail {
+  padding-left: 0px;
+}
+.logs-detail > li {
+  list-style: none;
+}
