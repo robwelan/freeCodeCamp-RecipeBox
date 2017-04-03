@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+var ons = require('onsenui');
 var Ons = require('react-onsenui');
 
 // import HomePage from './HomePage';
@@ -27,14 +28,24 @@ var Ons = require('react-onsenui');
 // }
 //
 
+const renderRow = (index) => {
+  return (
+      <Ons.ListItem key={index}>
+        {`Item ${index + 1}`}
+      </Ons.ListItem>
+    )
+}
+
 const Accordion = (props) => {
 
   let index = 1;
 
   return (
-    <Ons.ListItem key={index}>
-          <h1>hello</h1>
-    </Ons.ListItem>
+    <Ons.LazyList
+          length={100}
+          renderRow={renderRow}
+          calculateItemHeight={() => ons.platform.isAndroid() ? 48 : 44}
+        />
   )
 }
 
