@@ -3,6 +3,17 @@ import ReactDOM from 'react-dom';
 var ons = require('onsenui');
 var Ons = require('react-onsenui');
 
+
+window.fn = {};
+window.fn.toggle = function(el) {
+//  el.classList.toggle("active");
+  var oCN = el.childNodes;
+  var oCN0 = oCN[0].childNodes[0];
+  var oCN1 = oCN[0].childNodes[1];
+  oCN0.classList.toggle("active");
+  oCN1.classList.toggle("show");
+}
+
 // import HomePage from './HomePage';
 // import SettingsPage from './SettingsPage';
 //
@@ -28,10 +39,23 @@ var Ons = require('react-onsenui');
 // }
 //
 
+const Ingredients = () => {
+  return (
+    <div className="panel">
+        <div className="ingredients-title">Ingredients</div>
+          <Ons.ListItem tappable>Item 1</Ons.ListItem>
+          <Ons.ListItem tappable>Item 2</Ons.ListItem>
+          <Ons.ListItem tappable>Item 3</Ons.ListItem>
+          <Ons.ListItem tappable>Item 4</Ons.ListItem>
+      </div>
+  )
+}
+
 const renderRow = (index) => {
   return (
-      <Ons.ListItem key={index}>
-        {`Item ${index + 1}`}
+      <Ons.ListItem className="accordion" tappable onclick="fn.toggle(this)" key={index}>
+        <div className="recipe-title">{`Item ${index + 1}`}</div>
+        <Ingredients />
       </Ons.ListItem>
     )
 }
