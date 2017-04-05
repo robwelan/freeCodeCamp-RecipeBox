@@ -54,7 +54,11 @@ const Ingredients = () => {
 const renderRow = (index) => {
   return (
       <Ons.ListItem className="accordion" tappable onclick="fn.toggle(this)" key={index}>
-        <div className="recipe-title">{`Item ${index + 1}`}</div>
+        <div className="recipe-title">
+          <div className="recipe-title-left">{`Item ${index + 1}`}</div>
+          <div className="recipe-title-b1"><Ons.Button className="accordion-outer-button"><Ons.Icon icon='md-edit' /></Ons.Button></div>
+          <div className="recipe-title-b2"><Ons.Button className="accordion-outer-button" modifier='cta'><Ons.Icon icon='md-delete' /></Ons.Button></div>
+        </div>
         <Ingredients />
       </Ons.ListItem>
     )
