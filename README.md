@@ -1,6 +1,6 @@
 # freeCodeCamp-RecipeBox
 ReactJS with OnsenUI
 
-Check out the <a href="http://codepen.io/robwelan/pen/XMJMMP" target="_blank">Pen</a>.
+Check out the [Pen](http://codepen.io/robwelan/pen/XMJMMP).
 
 Uses Onsen Monaca CLI.
