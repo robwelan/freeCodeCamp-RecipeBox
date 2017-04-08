@@ -56,7 +56,8 @@
 
 div.panel {
   max-height: 0;
-  overflow: hidden;
+  overflow-y: scroll;
+  overflow-x: hidden;
   transition: 0.6s ease-in-out;
   opacity: 0;
   margin-left: 42px;
@@ -86,16 +87,20 @@ div.panel.show {
 
 .recipe-title {
   display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: stretch;
-    width: 100%;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 100%;
+  margin-left: 58px;
 }
 .recipe-title-left {order: 1; width: calc(100% - 88px); padding-top: 10px;}
+
 .recipe-title-b1 {order: 2; width: 44px;}
+
 .recipe-title-b2 {order: 3; width: 44px;}
-.recipe-title:before {
+
+/*.recipe-title:before {
   padding-top: 12px;
   content: '\02795';
   margin-left: 20px;
@@ -105,18 +110,37 @@ div.panel.show {
 .recipe-title.active:before {
   content: "\2796";
   cursor: pointer;
+}*/
+
+.ingredients-content, .methods-content {
+  font-size: 80%;
 }
 
-.ingredients-title {
+.recipe-ingredients, .recipe-methods {
+  width: calc(100% - 42px);
+  margin-left: 12px;
+}
+
+.recipe-ingredients {
+  margin-top: 40px;
+}
+
+.recipe-methods {
+  margin-top: 60px;
+}
+
+.recipe-methods-spacer {
+  display: block;
+  height: 60px;
   width: 100%;
-  margin-left: 14px;
-  margin-top: 30px;
-  margin-bottom: 15px;
-  font-size: 120%;
 }
 
 .accordion-outer-button {
   margin-left: 2px;
   width: 40px;
   text-align: center;
+}
+
+.new-recipe-control {
+  margin-bottom: 4px;
 }

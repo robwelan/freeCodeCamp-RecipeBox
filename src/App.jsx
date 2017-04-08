@@ -3,63 +3,109 @@ import ReactDOM from 'react-dom';
 var ons = require('onsenui');
 var Ons = require('react-onsenui');
 
-
 window.fn = {};
-window.fn.toggle = function(el) {
-//  el.classList.toggle("active");
+window.fn.toggleAccordion = function(el) {
   var oCN = el.childNodes;
   var oCN0 = oCN[0].childNodes[0];
   var oCN1 = oCN[0].childNodes[1];
   oCN0.classList.toggle("active");
   oCN1.classList.toggle("show");
 }
+window.fn.toggleList = function(el) {
+  var oPN1 = el.target.parentNode;
+  var oCNS1 = oPN1.childNodes;
+  var oCNS2 = oCNS1[0].childNodes;
+  var oIcon = oCNS2[0];
 
-// import HomePage from './HomePage';
-// import SettingsPage from './SettingsPage';
-//
-// export default class App extends React.Component {
-//   renderTabs() {
-//     return [
-//       {
-//         content: <HomePage />,
-//         tab: <Tab label='Home' icon='md-home' />
-//       },
-//       {
-//         content: <SettingsPage />,
-//         tab: <Tab label='Settings' icon='md-settings' />
-//       }
-//     ]
-//   }
-//
-//   render() {
-//     return (
-//       <Tabbar initialIndex={0} renderTabs={this.renderTabs.bind(this)} />
-//     );
-//   }
-// }
-//
+  fn.toggleIcon(oIcon);
+  fn.togglePanel(oPN1);
+}
+window.fn.toggleListIcon = function(el) {
+  var oIcon = el.target;
+  var oPN1 = el.target.parentNode;
+  var oPN2 = oPN1.parentNode;
+
+  fn.toggleIcon(oIcon);
+  // Pass Recipe Title
+  fn.togglePanel(oPN2);
+}
+window.fn.toggleIcon = function(el) {
+  if (el === undefined) {
+    return false;
+  }
+  var oIcon = el;
+  
+  if (oIcon.classList.contains('zmdi-plus') === true) {
+    oIcon.classList.add('zmdi-minus');
+    oIcon.classList.remove('zmdi-plus');
+  } else {
+    oIcon.classList.add('zmdi-plus');
+    oIcon.classList.remove('zmdi-minus');
+  }
+}
+window.fn.togglePanel = function(el) {
+  //  Get Accordion, then act accordingly...
+  var oPN1 = el.parentNode;
+  var oPN2 = oPN1.parentNode;
+  var oCN = oPN2.childNodes;
+  var oCN0 = oCN[0].childNodes[0];
+  var oCN1 = oCN[0].childNodes[1];
+
+  oCN0.classList.toggle("active");
+  oCN1.classList.toggle("show");
+}
 
 const Ingredients = () => {
   return (
-    <div className="panel">
-        <div className="ingredients-title">Ingredients</div>
-          <Ons.ListItem tappable>Item 1</Ons.ListItem>
-          <Ons.ListItem tappable>Item 2</Ons.ListItem>
-          <Ons.ListItem tappable>Item 3</Ons.ListItem>
-          <Ons.ListItem tappable>Item 4</Ons.ListItem>
+    <div className="recipe-ingredients">
+      <Ons.ListHeader>Ingredients</Ons.ListHeader>
+      <div className="ingredients-content">
+        <Ons.ListItem>Item 1</Ons.ListItem>
+        <Ons.ListItem>Item 2</Ons.ListItem>
+        <Ons.ListItem>Item 3</Ons.ListItem>
+        <Ons.ListItem>Item 4</Ons.ListItem>
       </div>
+    </div>
+  )
+}
+
+const Methods = () => {
+  return (
+    <div className="recipe-methods">
+      <Ons.ListHeader>Method</Ons.ListHeader>
+      <div className="methods-content">
+        <Ons.ListItem>Item 1</Ons.ListItem>
+        <Ons.ListItem>Item 2</Ons.ListItem>
+        <Ons.ListItem>Item 3</Ons.ListItem>
+        <Ons.ListItem>Item 4</Ons.ListItem>
+      </div>
+      <div className="recipe-methods-spacer" />
+    </div>
+  )
+}
+
+const RecipeContent = () => {
+  return (
+    <div className="panel">
+      <Ingredients />
+      <Methods />
+    </div>
   )
 }
 
 const renderRow = (index) => {
   return (
-      <Ons.ListItem className="accordion" tappable onclick="fn.toggle(this)" key={index}>
+      // <Ons.ListItem className="accordion" onclick="fn.toggleAccordion(this)" key={index}>
+      <Ons.ListItem className="accordion" key={index}>
         <div className="recipe-title">
-          <div className="recipe-title-left">{`Item ${index + 1}`}</div>
+          <div className="recipe-title-left" onClick={(event) => fn.toggleList(event)}>
+            <Ons.Icon  onClick={(event) => fn.toggleListIcon(event)} icon='md-plus' size={{'default': 26, material: 24}} style={{position: 'relative', top: '4px', left: '-34px'}}/>
+            {`Item ${index + 1}`}
+          </div>
           <div className="recipe-title-b1"><Ons.Button className="accordion-outer-button"><Ons.Icon icon='md-edit' /></Ons.Button></div>
           <div className="recipe-title-b2"><Ons.Button className="accordion-outer-button" modifier='cta'><Ons.Icon icon='md-delete' /></Ons.Button></div>
         </div>
-        <Ingredients />
+        <RecipeContent />
       </Ons.ListItem>
     )
 }
@@ -121,12 +167,9 @@ class MyTab extends React.Component {
     if (strPage === 'recipe box') {
       return (
         <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
-          <Accordion />
           <section className="standard-margin">
-            <h1>Hello World</h1>
-            <p>
-              This is the <strong>{this.props.title}</strong> tab.
-            </p>
+            <div className="new-recipe-control">New Recipe: <Ons.Button className="accordion-outer-button"><Ons.Icon icon='md-file-plus' /></Ons.Button></div>
+            <Accordion />
           </section>
         </Ons.Page>
       )
@@ -146,7 +189,9 @@ class MyTab extends React.Component {
     if (strPage === 'contact details') {
       return (
         <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
-          <ContactDetails />
+          <section className="standard-margin">
+            <ContactDetails />
+          </section>
         </Ons.Page>
       )
     }
@@ -168,6 +213,7 @@ class MyPage extends React.Component {
       index: 0
     }
   }
+
   renderTabs() {
     return [{
       content: <MyTab title='Recipe Box' key='content-home' />,
