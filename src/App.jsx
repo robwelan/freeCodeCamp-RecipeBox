@@ -1,59 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-var ons = require('onsenui');
-var Ons = require('react-onsenui');
-
-window.fn = {};
-window.fn.toggleAccordion = function(el) {
-  var oCN = el.childNodes;
-  var oCN0 = oCN[0].childNodes[0];
-  var oCN1 = oCN[0].childNodes[1];
-  oCN0.classList.toggle("active");
-  oCN1.classList.toggle("show");
-}
-window.fn.toggleList = function(el) {
-  var oPN1 = el.target.parentNode;
-  var oCNS1 = oPN1.childNodes;
-  var oCNS2 = oCNS1[0].childNodes;
-  var oIcon = oCNS2[0];
-
-  fn.toggleIcon(oIcon);
-  fn.togglePanel(oPN1);
-}
-window.fn.toggleListIcon = function(el) {
-  var oIcon = el.target;
-  var oPN1 = el.target.parentNode;
-  var oPN2 = oPN1.parentNode;
-
-  fn.toggleIcon(oIcon);
-  // Pass Recipe Title
-  fn.togglePanel(oPN2);
-}
-window.fn.toggleIcon = function(el) {
-  if (el === undefined) {
-    return false;
-  }
-  var oIcon = el;
-  
-  if (oIcon.classList.contains('zmdi-plus') === true) {
-    oIcon.classList.add('zmdi-minus');
-    oIcon.classList.remove('zmdi-plus');
-  } else {
-    oIcon.classList.add('zmdi-plus');
-    oIcon.classList.remove('zmdi-minus');
-  }
-}
-window.fn.togglePanel = function(el) {
-  //  Get Accordion, then act accordingly...
-  var oPN1 = el.parentNode;
-  var oPN2 = oPN1.parentNode;
-  var oCN = oPN2.childNodes;
-  var oCN0 = oCN[0].childNodes[0];
-  var oCN1 = oCN[0].childNodes[1];
-
-  oCN0.classList.toggle("active");
-  oCN1.classList.toggle("show");
-}
+import React from 'react'
+//  import ReactDOM from 'react-dom'
+var ons = require('onsenui')
+var Ons = require('react-onsenui')
 
 const Ingredients = () => {
   return (
@@ -93,35 +41,113 @@ const RecipeContent = () => {
   )
 }
 
-const renderRow = (index) => {
-  return (
-      // <Ons.ListItem className="accordion" onclick="fn.toggleAccordion(this)" key={index}>
-      <Ons.ListItem className="accordion" key={index}>
-        <div className="recipe-title">
-          <div className="recipe-title-left" onClick={(event) => fn.toggleList(event)}>
-            <Ons.Icon  onClick={(event) => fn.toggleListIcon(event)} icon='md-plus' size={{'default': 26, material: 24}} style={{position: 'relative', top: '4px', left: '-34px'}}/>
-            {`Item ${index + 1}`}
+const setActive = (listItemIndex) => {
+alert(listItemIndex)
+  this.props.handleItemSelect(listItemIndex);
+}
+
+// const renderRow = (index) => {
+//   return (
+//     <Ons.ListItem key={index}>
+//       <div className="recipe-container">
+//       <div className="recipe-title">
+//         <div className="recipe-title-left" onClick={(event) => window.fn.toggleListItem(event)}>
+//           <Ons.Icon onClick={(event) => window.fn.toggleListIcon(event)} icon="md-plus" size={{'default': 26, material: 24}} style={{position: 'relative', top: '4px', left: '-34px'}} />
+//           {`Item ${index + 1}`}
+//         </div>
+//         <div className="recipe-title-b1"><Ons.Button className="accordion-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button></div>
+//         <div className="recipe-title-b2"><Ons.Button className="accordion-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button></div>
+//       </div>
+//       <RecipeContent />
+//       </div>
+//     </Ons.ListItem>
+//   )
+// }
+
+class Accordion extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      expandRecipe: null
+    }
+    this.renderRow = this.renderRow.bind(this);
+  }
+
+  renderRow (index) {
+    // <div className="recipe-title-left" onClick={(event) => window.fn.toggleListItem(event)}>
+    let { expandRecipe } = this.state
+
+    if (expandRecipe !== index) {
+      return(
+        <Ons.ListItem key={index}>
+          <div className="recipe-container">
+            <div className="recipe-title">
+
+              <div className="recipe-title-left" onClick={ () => this.handleExpand(index) }>
+                <Ons.Icon className="showRecipeIcon" icon="md-plus" size={{'default': 26, material: 24}} />
+                <span className="recipe-title-position">{`Item ${index + 1}`}</span>
+              </div>
+              <div className="recipe-title-b1"><Ons.Button className="accordion-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button></div>
+              <div className="recipe-title-b2"><Ons.Button onClick={ () => this.handleDelete(index) } className="accordion-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button></div>
+            </div>
           </div>
-          <div className="recipe-title-b1"><Ons.Button className="accordion-outer-button"><Ons.Icon icon='md-edit' /></Ons.Button></div>
-          <div className="recipe-title-b2"><Ons.Button className="accordion-outer-button" modifier='cta'><Ons.Icon icon='md-delete' /></Ons.Button></div>
-        </div>
-        <RecipeContent />
-      </Ons.ListItem>
+        </Ons.ListItem>
+      )
+    } else {
+      return(
+        <Ons.ListItem key={index}>
+          <div className="recipe-container">
+            <div className="recipe-title">
+
+              <div className="recipe-title-left" onClick={ () => this.handleExpand(index) }>
+                <Ons.Icon className="showRecipeIcon" icon="md-minus" size={{'default': 26, material: 24}} />
+                <span className="recipe-title-position">{`Item ${index + 1}`}</span>
+              </div>
+              <div className="recipe-title-b1"><Ons.Button className="accordion-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button></div>
+              <div className="recipe-title-b2"><Ons.Button onClick={ () => this.handleDelete(index) } className="accordion-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button></div>
+            </div>
+            <RecipeContent />
+          </div>
+        </Ons.ListItem>
+      )
+    }
+  }
+
+  handleExpand (index) {
+    if (this.state.expandRecipe === index) {
+      this.setState({expandRecipe: null})
+    } else {
+      this.setState({expandRecipe: index})
+    }
+  }
+
+  handleDelete (index) {
+    alert(index)
+  }
+
+  render () {
+    return (
+      <Ons.LazyList
+        length={100}
+        renderRow={this.renderRow}
+        calculateItemHeight={() => ons.platform.isAndroid() ? 48 : 44}
+        handleExpand={this.handleExpand.bind(this)}
+        handleDelete={this.handleDelete.bind(this)}
+      />
     )
+  }
 }
-
-const Accordion = (props) => {
-
-  let index = 1;
-
-  return (
-    <Ons.LazyList
-          length={100}
-          renderRow={renderRow}
-          calculateItemHeight={() => ons.platform.isAndroid() ? 48 : 44}
-        />
-  )
-}
+//const Accordion = (props) => {
+////  let index = 1
+//
+//  return (
+//    <Ons.LazyList
+//      length={100}
+//      renderRow={renderRow}
+//      calculateItemHeight={() => ons.platform.isAndroid() ? 48 : 44}
+//    />
+  //  )
+//}
 
 const ContactDetails = (props) => {
   return (
@@ -130,7 +156,7 @@ const ContactDetails = (props) => {
         <Ons.Col width={'50%'}>
           <h5>About The Creature</h5>
           <p>I'm a JavaScript enthusiast who:</p>
-          <ol className='ol-contact'>
+          <ol className="ol-contact">
             <li>teaches JavaScript, CSS and HTML to others</li>
             <li>develops Apps and web sites using cool tech</li>
           </ol>
@@ -138,43 +164,158 @@ const ContactDetails = (props) => {
         <Ons.Col width={'50%'}>
           <h5>Ways To Contact Me</h5>
           <ul className="contact-list">
-            <li><a href="https://twitter.com/RobWelan" target="_blank"><i className="contact-icon fa fa-twitter" aria-hidden="true"></i>Twitter</a></li>
-            <li><a href="https://plus.google.com/u/0/+RobWelan" target="_target"><i className="contact-icon fa fa-google-plus-official" aria-hidden="true"></i>Google+</a></li>
-            <li><a href="https://github.com/robwelan" target="_blank"><i className="contact-icon fa fa-github" aria-hidden="true"></i>GitHub</a></li>
-            <li><a href="https://gitlab.com/robwelan" target="_blank"><i className="contact-icon fa fa-gitlab" aria-hidden="true"></i>GitLab</a></li>
-            <li><a href="https://www.linkedin.com/in/robwelan" target="_blank"><i className="contact-icon fa fa-linkedin" aria-hidden="true"></i>LinkedIn</a></li>
-            <li><a href="https://www.freecodecamp.com/robwelan" target="_blank"><i className="contact-icon fa fa-free-code-camp" aria-hidden="true"></i>freeCodeCamp</a></li>
+            <li>
+              <a href="https://twitter.com/RobWelan" target="_blank">
+                <i className="contact-icon fa fa-twitter" aria-hidden="true" />
+                Twitter
+              </a>
+            </li>
+            <li>
+              <a href="https://plus.google.com/u/0/+RobWelan" target="_blank">
+                <i className="contact-icon fa fa-google-plus-official" aria-hidden="true" />
+                Google+
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/robwelan" target="_blank">
+                <i className="contact-icon fa fa-github" aria-hidden="true" />
+                GitHub
+              </a>
+            </li>
+            <li>
+              <a href="https://gitlab.com/robwelan" target="_blank">
+                <i className="contact-icon fa fa-gitlab" aria-hidden="true" />
+                GitLab
+              </a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/robwelan" target="_blank">
+                <i className="contact-icon fa fa-linkedin" aria-hidden="true" />
+                LinkedIn
+              </a>
+            </li>
+            <li>
+              <a href="https://www.freecodecamp.com/robwelan" target="_blank">
+                <i className="contact-icon fa fa-free-code-camp" aria-hidden="true" />
+                freeCodeCamp
+              </a>
+            </li>
           </ul>
         </Ons.Col>
       </Ons.Row>
     </section>
   )
 }
-class MyTab extends React.Component {
-  constructor(props) {
+class NewRecipe extends React.Component {
+  constructor (props) {
     super(props)
+    this.state = {
+      newRecipe: {
+        title: '',
+        ingredients: [],
+        method: []
+      }
+    }
   }
-  renderToolbar() {
+
+  renderToolbar () {
     return (
       <Ons.Toolbar>
-        <div className='center'>{this.props.title}</div>
+        <div className="center">New Recipe</div>
       </Ons.Toolbar>
     )
   }
-  render() {
+
+  renderRow (row, index) {
+    const x = 40 + Math.round(5 * (Math.random() - 0.5)),
+          y = 40 + Math.round(5 * (Math.random() - 0.5))
+
+    const names = ['Max', 'Chloe', 'Bella', 'Oliver', 'Tiger', 'Lucy', 'Shadow', 'Angel']
+    const name = names[Math.floor(names.length * Math.random())]
+
+    return (
+      <Ons.ListItem key={index}>
+        <div className="left">
+          <img src={`http://placekitten.com/g/${x}/${y}`} className="list-item__thumbnail" />
+        </div>
+        <div className="center">
+          {name}
+        </div>
+      </Ons.ListItem>
+    )
+  }
+
+  render () {
+    return (
+      <Ons.Page renderToolbar={this.renderToolbar}>
+        <section className="standard-margin">
+          <section style={{textAlign: 'center'}}>
+            <p>
+              <Ons.Input
+                value={this.state.newRecipe.title}
+                onChange={this.handleUsernameChange}
+                modifier="underbar"
+                float
+                placeholder="Recipe Title"
+              />
+            </p>
+            <Ons.List
+              dataSource={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+              renderRow={this.renderRow}
+              renderHeader={() => <Ons.ListHeader>Cute cats</Ons.ListHeader>}
+            />
+          </section>
+        </section>
+      </Ons.Page>
+    )
+  }
+}
+
+class MyTab extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      actions: {
+        contentToDisplay: 'list'
+      }
+    }
+  }
+  renderToolbar () {
+    return (
+      <Ons.Toolbar>
+        <div className="center">{this.props.title}</div>
+      </Ons.Toolbar>
+    )
+  }
+  actionCreateNewRecipe () {
+    this.setState({
+      ...this.state.actions,
+      actions: {
+        contentToDisplay: 'newRecipe'
+      }
+    });
+  }
+  render () {
     const strPage = this.props.title.toLowerCase()
+    const { actions: { contentToDisplay } } = this.state
 
     if (strPage === 'recipe box') {
-      return (
-        <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
-          <section className="standard-margin">
-            <div className="new-recipe-control">New Recipe: <Ons.Button className="accordion-outer-button"><Ons.Icon icon='md-file-plus' /></Ons.Button></div>
-            <Accordion />
-          </section>
-        </Ons.Page>
-      )
+      if (contentToDisplay === 'list') {
+        return (
+          <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
+            <section className="standard-margin">
+              <div className="new-recipe-control">Create New Recipe: <Ons.Button onClick={this.actionCreateNewRecipe.bind(this)} className="accordion-outer-button"><Ons.Icon icon="md-file-plus" /></Ons.Button></div>
+              <Accordion/>
+            </section>
+          </Ons.Page>
+        )
+      } else {
+        return (
+          <NewRecipe />
+        )
+      }
     }
-    if (strPage ==='logs') {
+    if (strPage === 'logs') {
       return (
         <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
           <section className="standard-margin">
@@ -207,47 +348,47 @@ class MyTab extends React.Component {
 }
 
 class MyPage extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       index: 0
     }
   }
 
-  renderTabs() {
-    return [{
-      content: <MyTab title='Recipe Box' key='content-home' />,
-      tab: <Ons.Tab label='Recipe Box' icon='md-pages' key='tab-home' />
-    },
-    {
-      content: <MyTab title='Logs' key='content-logs' />,
-      tab: <Ons.Tab label='Logs' icon='md-view-toc' key='tab-logs' />
-    },
-    {
-      content: <MyTab title='Contact Details' key='content-contact' />,
-      tab: <Ons.Tab label='Contact' icon='md-account' key='tab-contact' />
-    }]
+    renderTabs () {
+      return [{
+        content: <MyTab title='Recipe Box' key='content-home' />,
+        tab: <Ons.Tab label='Recipe Box' icon='md-pages' key='tab-home' />
+      },
+      {
+        content: <MyTab title='Logs' key='content-logs' />,
+        tab: <Ons.Tab label='Logs' icon='md-view-toc' key='tab-logs' />
+      },
+      {
+        content: <MyTab title='Contact Details' key='content-contact' />,
+        tab: <Ons.Tab label='Contact' icon='md-account' key='tab-contact' />
+      }]
+    }
+  render () {
+    return (
+                <Ons.Tabbar index={
+                  this.state.index
+                }
+                  onPreChange = {
+                    (event) => {
+                      if (event.index !== this.state.index) {
+                        this.setState({
+                          index: event.index
+                        })
+                      }
+                    }
+                  }
+                  renderTabs = {
+                    this.renderTabs.bind(this)
+                  }
+                />
+    )
   }
-  render() {
-    return ( <
-      Ons.Tabbar index = {
-        this.state.index
-      }
-      onPreChange = {
-        (event) => {
-          if (event.index != this.state.index) {
-            this.setState({
-              index: event.index
-            })
-          }
-        }
-      }
-      renderTabs = {
-        this.renderTabs.bind(this)
-      }
-    />
-  )
-}
 }
 
 export { MyPage }
