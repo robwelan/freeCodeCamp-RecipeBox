@@ -41,28 +41,18 @@ const RecipeContent = () => {
   )
 }
 
+const renderToolbar = (props) => {
+    return (
+      <Ons.Toolbar>
+        <div className="center">{props}</div>
+      </Ons.Toolbar>
+    )
+}
+
 const setActive = (listItemIndex) => {
 alert(listItemIndex)
   this.props.handleItemSelect(listItemIndex);
 }
-
-// const renderRow = (index) => {
-//   return (
-//     <Ons.ListItem key={index}>
-//       <div className="recipe-container">
-//       <div className="recipe-title">
-//         <div className="recipe-title-left" onClick={(event) => window.fn.toggleListItem(event)}>
-//           <Ons.Icon onClick={(event) => window.fn.toggleListIcon(event)} icon="md-plus" size={{'default': 26, material: 24}} style={{position: 'relative', top: '4px', left: '-34px'}} />
-//           {`Item ${index + 1}`}
-//         </div>
-//         <div className="recipe-title-b1"><Ons.Button className="accordion-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button></div>
-//         <div className="recipe-title-b2"><Ons.Button className="accordion-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button></div>
-//       </div>
-//       <RecipeContent />
-//       </div>
-//     </Ons.ListItem>
-//   )
-// }
 
 class Accordion extends React.Component {
   constructor (props) {
@@ -74,8 +64,7 @@ class Accordion extends React.Component {
   }
 
   renderRow (index) {
-    // <div className="recipe-title-left" onClick={(event) => window.fn.toggleListItem(event)}>
-    let { expandRecipe } = this.state
+    const { expandRecipe } = this.state
 
     if (expandRecipe !== index) {
       return(
@@ -87,8 +76,8 @@ class Accordion extends React.Component {
                 <Ons.Icon className="showRecipeIcon" icon="md-plus" size={{'default': 26, material: 24}} />
                 <span className="recipe-title-position">{`Item ${index + 1}`}</span>
               </div>
-              <div className="recipe-title-b1"><Ons.Button className="accordion-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button></div>
-              <div className="recipe-title-b2"><Ons.Button onClick={ () => this.handleDelete(index) } className="accordion-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button></div>
+              <div className="recipe-title-b1"><Ons.Button onClick={() => this.handleEdit(index)} className="accordion-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button></div>
+              <div className="recipe-title-b2"><Ons.Button onClick={() => this.handleDelete(index)} className="accordion-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button></div>
             </div>
           </div>
         </Ons.ListItem>
@@ -103,8 +92,8 @@ class Accordion extends React.Component {
                 <Ons.Icon className="showRecipeIcon" icon="md-minus" size={{'default': 26, material: 24}} />
                 <span className="recipe-title-position">{`Item ${index + 1}`}</span>
               </div>
-              <div className="recipe-title-b1"><Ons.Button className="accordion-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button></div>
-              <div className="recipe-title-b2"><Ons.Button onClick={ () => this.handleDelete(index) } className="accordion-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button></div>
+              <div className="recipe-title-b1"><Ons.Button onClick={() => this.handleEdit(index)} className="accordion-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button></div>
+              <div className="recipe-title-b2"><Ons.Button onClick={() => this.handleDelete(index)} className="accordion-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button></div>
             </div>
             <RecipeContent />
           </div>
@@ -125,6 +114,10 @@ class Accordion extends React.Component {
     alert(index)
   }
 
+  handleEdit (index) {
+    alert(index)
+  }
+
   render () {
     return (
       <Ons.LazyList
@@ -132,28 +125,18 @@ class Accordion extends React.Component {
         renderRow={this.renderRow}
         calculateItemHeight={() => ons.platform.isAndroid() ? 48 : 44}
         handleExpand={this.handleExpand.bind(this)}
+        handleEdit={this.handleEdit.bind(this)}
         handleDelete={this.handleDelete.bind(this)}
       />
     )
   }
 }
-//const Accordion = (props) => {
-////  let index = 1
-//
-//  return (
-//    <Ons.LazyList
-//      length={100}
-//      renderRow={renderRow}
-//      calculateItemHeight={() => ons.platform.isAndroid() ? 48 : 44}
-//    />
-  //  )
-//}
 
 const ContactDetails = (props) => {
   return (
     <section className="standard-margin">
       <Ons.Row verticalAlign={'top'}>
-        <Ons.Col width={'50%'}>
+        <Ons.Col width={'45%'}>
           <h5>About The Creature</h5>
           <p>I'm a JavaScript enthusiast who:</p>
           <ol className="ol-contact">
@@ -161,7 +144,8 @@ const ContactDetails = (props) => {
             <li>develops Apps and web sites using cool tech</li>
           </ol>
         </Ons.Col>
-        <Ons.Col width={'50%'}>
+        <Ons.Col width={'10%'}></Ons.Col>
+        <Ons.Col width={'45%'}>
           <h5>Ways To Contact Me</h5>
           <ul className="contact-list">
             <li>
@@ -214,16 +198,12 @@ class NewRecipe extends React.Component {
         title: '',
         ingredients: [],
         method: []
+      },
+      actions: {
+        save: false,
+        cancel: false
       }
     }
-  }
-
-  renderToolbar () {
-    return (
-      <Ons.Toolbar>
-        <div className="center">New Recipe</div>
-      </Ons.Toolbar>
-    )
   }
 
   renderRow (row, index) {
@@ -245,29 +225,51 @@ class NewRecipe extends React.Component {
     )
   }
 
+  actionCancel () {
+    this.setState({
+      ...this.state.actions,
+      actions: {
+        cancel: true
+      }
+    });
+  }
+
   render () {
-    return (
-      <Ons.Page renderToolbar={this.renderToolbar}>
-        <section className="standard-margin">
-          <section style={{textAlign: 'center'}}>
-            <p>
-              <Ons.Input
-                value={this.state.newRecipe.title}
-                onChange={this.handleUsernameChange}
-                modifier="underbar"
-                float
-                placeholder="Recipe Title"
-              />
-            </p>
-            <Ons.List
-              dataSource={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
-              renderRow={this.renderRow}
-              renderHeader={() => <Ons.ListHeader>Cute cats</Ons.ListHeader>}
-            />
+    const { actions } = this.state
+
+    if (actions.cancel === false && actions.save === false) {
+      return (
+        <Ons.Page renderToolbar={() => renderToolbar('New Recipe')}>
+          <section className="standard-margin">
+            <section style={{textAlign: 'center'}}>
+              <p>
+                <Ons.Input
+                  value={this.state.newRecipe.title}
+                  onChange={this.handleUsernameChange}
+                  modifier="underbar"
+                  float
+                  placeholder="Recipe Title"
+                  />
+              </p>
+            </section>
+            <div className="control-form-content-height">
+              <Ons.List
+                dataSource={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+                renderRow={this.renderRow}
+                renderHeader={() => <Ons.ListHeader>Cute cats</Ons.ListHeader>}
+                />
+            </div>
+            <section style={{textAlign: 'right'}}>
+              <Ons.Button style={{margin: '10px 0px 0px 0px'}} modifier='cta'>Save and Close</Ons.Button>
+              <Ons.Button  onClick={this.actionCancel.bind(this)} style={{margin: '10px 0px 0px 10px'}} modifier='outline'>Cancel</Ons.Button>
+            </section>
           </section>
-        </section>
-      </Ons.Page>
-    )
+        </Ons.Page>
+      )
+    }
+    else if (actions.cancel === true) {
+      return (<MyTab title='Recipe Box' key='content-home' />)
+    }
   }
 }
 
@@ -279,13 +281,6 @@ class MyTab extends React.Component {
         contentToDisplay: 'list'
       }
     }
-  }
-  renderToolbar () {
-    return (
-      <Ons.Toolbar>
-        <div className="center">{this.props.title}</div>
-      </Ons.Toolbar>
-    )
   }
   actionCreateNewRecipe () {
     this.setState({
@@ -302,7 +297,7 @@ class MyTab extends React.Component {
     if (strPage === 'recipe box') {
       if (contentToDisplay === 'list') {
         return (
-          <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
+          <Ons.Page renderToolbar={() => renderToolbar(this.props.title)}>
             <section className="standard-margin">
               <div className="new-recipe-control">Create New Recipe: <Ons.Button onClick={this.actionCreateNewRecipe.bind(this)} className="accordion-outer-button"><Ons.Icon icon="md-file-plus" /></Ons.Button></div>
               <Accordion/>
@@ -317,9 +312,8 @@ class MyTab extends React.Component {
     }
     if (strPage === 'logs') {
       return (
-        <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
+        <Ons.Page renderToolbar={() => renderToolbar(this.props.title)}>
           <section className="standard-margin">
-            <h1>Logs</h1>
             <ul className="logs-detail">
               <li>-log-</li>
             </ul>
@@ -329,7 +323,7 @@ class MyTab extends React.Component {
     }
     if (strPage === 'contact details') {
       return (
-        <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
+        <Ons.Page renderToolbar={() => renderToolbar(this.props.title)}>
           <section className="standard-margin">
             <ContactDetails />
           </section>
@@ -337,7 +331,7 @@ class MyTab extends React.Component {
       )
     }
     return (
-      <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
+      <Ons.Page renderToolbar={() => renderToolbar(this.props.title)}>
         <section className="standard-margin">
           <h1>Hello World</h1>
           <p>If you got here, no page matched.</p>
