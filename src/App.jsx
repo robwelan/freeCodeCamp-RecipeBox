@@ -3,40 +3,96 @@ import React from 'react'
 var ons = require('onsenui')
 var Ons = require('react-onsenui')
 
-const Ingredients = () => {
-  return (
-    <div className="recipe-ingredients">
-      <Ons.ListHeader>Ingredients</Ons.ListHeader>
-      <div className="ingredients-content">
-        <Ons.ListItem>Item 1</Ons.ListItem>
-        <Ons.ListItem>Item 2</Ons.ListItem>
-        <Ons.ListItem>Item 3</Ons.ListItem>
-        <Ons.ListItem>Item 4</Ons.ListItem>
-      </div>
-    </div>
-  )
+const capitalize = (s) => {
+    return s && s[0].toUpperCase() + s.slice(1);
 }
 
-const Methods = () => {
-  return (
-    <div className="recipe-methods">
-      <Ons.ListHeader>Method</Ons.ListHeader>
-      <div className="methods-content">
-        <Ons.ListItem>Item 1</Ons.ListItem>
-        <Ons.ListItem>Item 2</Ons.ListItem>
-        <Ons.ListItem>Item 3</Ons.ListItem>
-        <Ons.ListItem>Item 4</Ons.ListItem>
+class ItemDetails extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      enableEdit: this.props.enableEdit || false,
+      type: this.props.type || 'ingredient',
+      ingredients: [{id: 0, id_rel: 0, ingredient: ''}],
+      methods: [{id: 0, id_rel: 0, description: '', step: 0}]
+    }
+  }
+
+  handleEdit () {
+    this.setState(() => {
+      return {...this.state,
+      enableEdit: true,};
+    });
+  }
+
+  render() {
+    const { enableEdit, type } = this.state;
+
+    return(
+      <div className="recipe-detail">
+        { enableEdit ?
+          <div className="recipe-detail-left">
+            <Ons.Input
+              value={'gooby'}
+              onChange={this.handleUsernameChange}
+              modifier="underbar"
+              float
+              placeholder={type}
+            />
+          </div> :
+        <div className="recipe-detail-left">Hello</div>
+        }
+        { enableEdit ?
+          <div className="recipe-detail-right">
+            <Ons.Button onClick={() => this.handleEdit()} className="details-outer-button"><Ons.Icon icon="md-check" /></Ons.Button>
+            <Ons.Button onClick={() => this.handleDelete(index)} className="details-outer-button" modifier="cta"><Ons.Icon icon="md-close" /></Ons.Button>
+          </div> :
+          <div className="recipe-detail-right">
+            <Ons.Button onClick={() => this.handleEdit()} className="details-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button>
+            <Ons.Button onClick={() => this.handleDelete(index)} className="details-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button>
+          </div>
+        }
       </div>
-      <div className="recipe-methods-spacer" />
-    </div>
-  )
+    )
+  }
 }
 
-const RecipeContent = () => {
+class RecipeDetails extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      ingredients: [{id: 0, id_rel: 0, ingredient: ''}],
+      methods: [{id: 0, id_rel: 0, description: '', step: 0}]
+    }
+  }
+
+  handleAdd () {
+    alert('blah')
+  }
+
+  render() {
+    return (
+      <div className={`recipe-${this.props.typeOfDetails}`}>
+        <Ons.ListHeader>{capitalize(this.props.typeOfDetails)}</Ons.ListHeader>
+        <div className={`${this.props.typeOfDetails}-content`}>
+          <Ons.ListItem><ItemDetails /></Ons.ListItem>
+          <Ons.ListItem>Item 2</Ons.ListItem>
+          <Ons.ListItem>Item 3</Ons.ListItem>
+          <Ons.ListItem>Item 4</Ons.ListItem>
+        </div>
+
+        <div className="width-100"><Ons.Button onClick={() => this.handleAdd()} className="details-outer-button button-position-add"><Ons.Icon icon="md-file-plus" /></Ons.Button></div>
+      </div>
+    )
+  }
+}
+
+const RecipeContent = (props) => {
   return (
     <div className="panel">
-      <Ingredients />
-      <Methods />
+      <RecipeDetails typeOfDetails={'ingredients'} />
+      <div className="recipe-methods-spacer" />
+      <RecipeDetails typeOfDetails={'methods'} />
     </div>
   )
 }
@@ -206,25 +262,6 @@ class NewRecipe extends React.Component {
     }
   }
 
-  renderRow (row, index) {
-    const x = 40 + Math.round(5 * (Math.random() - 0.5)),
-          y = 40 + Math.round(5 * (Math.random() - 0.5))
-
-    const names = ['Max', 'Chloe', 'Bella', 'Oliver', 'Tiger', 'Lucy', 'Shadow', 'Angel']
-    const name = names[Math.floor(names.length * Math.random())]
-
-    return (
-      <Ons.ListItem key={index}>
-        <div className="left">
-          <img src={`http://placekitten.com/g/${x}/${y}`} className="list-item__thumbnail" />
-        </div>
-        <div className="center">
-          {name}
-        </div>
-      </Ons.ListItem>
-    )
-  }
-
   actionCancel () {
     this.setState({
       ...this.state.actions,
@@ -241,24 +278,20 @@ class NewRecipe extends React.Component {
       return (
         <Ons.Page renderToolbar={() => renderToolbar('New Recipe')}>
           <section className="standard-margin">
-            <section style={{textAlign: 'center'}}>
-              <p>
-                <Ons.Input
-                  value={this.state.newRecipe.title}
-                  onChange={this.handleUsernameChange}
-                  modifier="underbar"
-                  float
-                  placeholder="Recipe Title"
-                  />
-              </p>
-            </section>
-            <div className="control-form-content-height">
-              <Ons.List
-                dataSource={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
-                renderRow={this.renderRow}
-                renderHeader={() => <Ons.ListHeader>Cute cats</Ons.ListHeader>}
+            <p>
+              <Ons.Input
+                value={this.state.newRecipe.title}
+                onChange={this.handleUsernameChange}
+                modifier="underbar"
+                float
+                placeholder="Recipe Title"
                 />
+            </p>
+
+            <div className="control-form-content-height">
+              <RecipeContent allowEdit={true}/>
             </div>
+
             <section style={{textAlign: 'right'}}>
               <Ons.Button style={{margin: '10px 0px 0px 0px'}} modifier='cta'>Save and Close</Ons.Button>
               <Ons.Button  onClick={this.actionCancel.bind(this)} style={{margin: '10px 0px 0px 10px'}} modifier='outline'>Cancel</Ons.Button>
