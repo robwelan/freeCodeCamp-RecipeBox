@@ -7,14 +7,14 @@ const capitalize = (s) => {
     return s && s[0].toUpperCase() + s.slice(1);
 }
 
-class ItemDetails extends React.Component {
+class ItemDetail extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       enableEdit: this.props.enableEdit || false,
       type: this.props.type || 'ingredient',
-      ingredients: [{id: 0, id_rel: 0, ingredient: ''}],
-      methods: [{id: 0, id_rel: 0, description: '', step: 0}]
+      ingredient: [{id: 0, id_rel: 0, ingredient: ''}],
+      method: [{id: 0, id_rel: 0, description: '', step: 0}]
     }
   }
 
@@ -28,32 +28,45 @@ class ItemDetails extends React.Component {
   render() {
     const { enableEdit, type } = this.state;
 
-    return(
-      <div className="recipe-detail">
-        { enableEdit ?
-          <div className="recipe-detail-left">
+    if (enableEdit) {
+      return(
+        <ons-row>
+          <ons-col width="92px">
+            <Ons.Button onClick={() => this.handleEdit()} className="details-outer-button"><Ons.Icon icon="md-long-arrow-down" /></Ons.Button>
+            <Ons.Button onClick={() => this.handleDelete(index)} className="details-outer-button"><Ons.Icon icon="md-long-arrow-up" /></Ons.Button>
+          </ons-col>
+          <ons-col width="calc(100% - (92px * 2))">
+
             <Ons.Input
               value={'gooby'}
               onChange={this.handleUsernameChange}
               modifier="underbar"
               float
               placeholder={type}
-            />
-          </div> :
-        <div className="recipe-detail-left">Hello</div>
-        }
-        { enableEdit ?
-          <div className="recipe-detail-right">
+            ></Ons.Input>
+
+          </ons-col>
+          <ons-col width="92px">
             <Ons.Button onClick={() => this.handleEdit()} className="details-outer-button"><Ons.Icon icon="md-check" /></Ons.Button>
             <Ons.Button onClick={() => this.handleDelete(index)} className="details-outer-button" modifier="cta"><Ons.Icon icon="md-close" /></Ons.Button>
-          </div> :
-          <div className="recipe-detail-right">
+          </ons-col>
+        </ons-row>
+      )
+    } else {
+      return (
+        <ons-row>
+          <ons-col>
+            <Ons.ListItem>
+              Hellom
+            </Ons.ListItem>
+          </ons-col>
+          <ons-col width="92px">
             <Ons.Button onClick={() => this.handleEdit()} className="details-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button>
             <Ons.Button onClick={() => this.handleDelete(index)} className="details-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button>
-          </div>
-        }
-      </div>
-    )
+          </ons-col>
+        </ons-row>
+      )
+    }
   }
 }
 
@@ -61,6 +74,7 @@ class RecipeDetails extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
+      type: props.typeOfDetails,
       ingredients: [{id: 0, id_rel: 0, ingredient: ''}],
       methods: [{id: 0, id_rel: 0, description: '', step: 0}]
     }
@@ -71,17 +85,27 @@ class RecipeDetails extends React.Component {
   }
 
   render() {
+    const { type, ingredients, methods } = this.state
+    console.log(this.props)
     return (
-      <div className={`recipe-${this.props.typeOfDetails}`}>
-        <Ons.ListHeader>{capitalize(this.props.typeOfDetails)}</Ons.ListHeader>
-        <div className={`${this.props.typeOfDetails}-content`}>
-          <Ons.ListItem><ItemDetails /></Ons.ListItem>
-          <Ons.ListItem>Item 2</Ons.ListItem>
-          <Ons.ListItem>Item 3</Ons.ListItem>
-          <Ons.ListItem>Item 4</Ons.ListItem>
+      <div className={`recipe-${type}`}>
+        <ons-row>
+          <ons-col>
+            <Ons.ListHeader>{capitalize(type)}</Ons.ListHeader>
+          </ons-col>
+        </ons-row>
+        <div className={`${type}-content`}>
+          <ItemDetail />
         </div>
-
-        <div className="width-100"><Ons.Button onClick={() => this.handleAdd()} className="details-outer-button button-position-add"><Ons.Icon icon="md-file-plus" /></Ons.Button></div>
+        <ons-row>
+          <ons-col>
+            <div className={`${type}-content`}>
+              <Ons.ListItem modifier="nodivider">
+                <Ons.Button className="details-outer-button" onClick={() => this.handleAdd()}><Ons.Icon icon="md-file-plus" /></Ons.Button>
+              </Ons.ListItem>
+          </div>
+          </ons-col>
+        </ons-row>
       </div>
     )
   }
@@ -90,11 +114,87 @@ class RecipeDetails extends React.Component {
 const RecipeContent = (props) => {
   return (
     <div className="panel">
-      <RecipeDetails typeOfDetails={'ingredients'} />
-      <div className="recipe-methods-spacer" />
-      <RecipeDetails typeOfDetails={'methods'} />
+      <RecipeDetails typeOfDetails={'ingredients'} addDetail={props.addIngredient} />
+      <div className="recipe-contents-spacer" />
+      <RecipeDetails typeOfDetails={'methods'} addDetail={props.addMethod} />
+      <div className="recipe-contents-spacer" />
     </div>
   )
+}
+
+class Recipe extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      recipe: {
+        title: '',
+        ingredient: [{id: 0, id_rel: 0, ingredient: ''}],
+        method: [{id: 0, id_rel: 0, description: '', step: 0}]
+      },
+      actions: {
+        save: false,
+        cancel: false
+      }
+    }
+    this.addIngredient = this.addIngredient.bind(this);
+    this.addMethod = this.addMethod.bind(this);
+    this.actionCancel = this.actionCancel.bind(this);
+  }
+
+  addIngredient () {
+    alert('addIngredient');
+  }
+
+  addMethod () {
+    alert('addMethod');
+  }
+
+  actionCancel () {
+    this.setState({
+      ...this.state.actions,
+      actions: {
+        cancel: true
+      }
+    });
+  }
+
+  render () {
+    const { actions } = this.state
+
+    if (actions.cancel === false && actions.save === false) {
+      return (
+        <Ons.Page renderToolbar={() => renderToolbar('New Recipe')}>
+          <section className="standard-margin">
+            <p>
+              <Ons.Input
+                value={this.state.recipe.title}
+                onChange={this.handleUsernameChange}
+                modifier="underbar"
+                float
+                placeholder="Recipe Title"
+                />
+            </p>
+
+            <div className="control-form-content-height">
+              <RecipeContent
+                allowEdit={true}
+                addIngredient={() => this.addIngredient}
+                addMethod={()=>this.addMethod}
+              />
+            </div>
+
+            <section style={{textAlign: 'right'}}>
+              <Ons.Button style={{margin: '10px 0px 0px 0px'}} modifier='cta'>Save and Close</Ons.Button>
+              <Ons.Button  onClick={this.actionCancel.bind(this)} style={{margin: '10px 0px 0px 10px'}} modifier='outline'>Cancel</Ons.Button>
+            </section>
+          </section>
+        </Ons.Page>
+      )
+    }
+    else if (actions.cancel === true) {
+      return (<MyTab title='Recipe Box' key='content-home' />)
+    }
+  }
 }
 
 const renderToolbar = (props) => {
@@ -124,36 +224,46 @@ class Accordion extends React.Component {
 
     if (expandRecipe !== index) {
       return(
-        <Ons.ListItem key={index}>
-          <div className="recipe-container">
-            <div className="recipe-title">
-
-              <div className="recipe-title-left" onClick={ () => this.handleExpand(index) }>
-                <Ons.Icon className="showRecipeIcon" icon="md-plus" size={{'default': 26, material: 24}} />
-                <span className="recipe-title-position">{`Item ${index + 1}`}</span>
-              </div>
-              <div className="recipe-title-b1"><Ons.Button onClick={() => this.handleEdit(index)} className="accordion-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button></div>
-              <div className="recipe-title-b2"><Ons.Button onClick={() => this.handleDelete(index)} className="accordion-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button></div>
-            </div>
-          </div>
-        </Ons.ListItem>
+        <div key={index} className="main-page-recipe-list-item">
+          <ons-row vertical-align="center">
+            <ons-col width="2em">
+                <Ons.Icon className="cursor-pointer showRecipeIcon" icon="md-plus" size={{'default': 26, material: 24}} onClick={ () => this.handleExpand(index) } />
+            </ons-col>
+            <ons-col>
+              {`Item ${index + 1}`}
+            </ons-col>
+            <ons-col width="92px">
+              <Ons.Button onClick={() => this.handleEdit(index)} className="accordion-outer-button cursor-pointer"><Ons.Icon icon="md-edit" /></Ons.Button>
+              <Ons.Button onClick={() => this.handleDelete(index)} className="accordion-outer-button cursor-pointer" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button>
+            </ons-col>
+          </ons-row>
+        </div>
       )
     } else {
       return(
-        <Ons.ListItem key={index}>
-          <div className="recipe-container">
-            <div className="recipe-title">
-
-              <div className="recipe-title-left" onClick={ () => this.handleExpand(index) }>
-                <Ons.Icon className="showRecipeIcon" icon="md-minus" size={{'default': 26, material: 24}} />
-                <span className="recipe-title-position">{`Item ${index + 1}`}</span>
-              </div>
-              <div className="recipe-title-b1"><Ons.Button onClick={() => this.handleEdit(index)} className="accordion-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button></div>
-              <div className="recipe-title-b2"><Ons.Button onClick={() => this.handleDelete(index)} className="accordion-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button></div>
-            </div>
-            <RecipeContent />
-          </div>
-        </Ons.ListItem>
+        <div key={index} className="main-page-recipe-list-item">
+          <ons-row vertical-align="center">
+            <ons-col width="2em">
+              <Ons.Icon className="cursor-pointer showRecipeIcon" icon="md-minus" size={{'default': 26, material: 24}} onClick={ () => this.handleExpand(index) }/>
+            </ons-col>
+            <ons-col>
+              {`Item ${index + 1}`}
+            </ons-col>
+            <ons-col width="92px">
+              <Ons.Button onClick={() => this.handleEdit(index)} className="accordion-outer-button"><Ons.Icon icon="md-edit" /></Ons.Button>
+              <Ons.Button onClick={() => this.handleDelete(index)} className="accordion-outer-button" modifier="cta"><Ons.Icon icon="md-delete" /></Ons.Button>
+            </ons-col>
+            <ons-col width="100%">
+              <hr />
+            </ons-col>
+            <ons-col width="100%">
+              <RecipeContent />
+            </ons-col>
+            <ons-col width="100%">
+              <hr />
+            </ons-col>
+          </ons-row>
+        </div>
       )
     }
   }
@@ -246,65 +356,6 @@ const ContactDetails = (props) => {
     </section>
   )
 }
-class NewRecipe extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      newRecipe: {
-        title: '',
-        ingredients: [],
-        method: []
-      },
-      actions: {
-        save: false,
-        cancel: false
-      }
-    }
-  }
-
-  actionCancel () {
-    this.setState({
-      ...this.state.actions,
-      actions: {
-        cancel: true
-      }
-    });
-  }
-
-  render () {
-    const { actions } = this.state
-
-    if (actions.cancel === false && actions.save === false) {
-      return (
-        <Ons.Page renderToolbar={() => renderToolbar('New Recipe')}>
-          <section className="standard-margin">
-            <p>
-              <Ons.Input
-                value={this.state.newRecipe.title}
-                onChange={this.handleUsernameChange}
-                modifier="underbar"
-                float
-                placeholder="Recipe Title"
-                />
-            </p>
-
-            <div className="control-form-content-height">
-              <RecipeContent allowEdit={true}/>
-            </div>
-
-            <section style={{textAlign: 'right'}}>
-              <Ons.Button style={{margin: '10px 0px 0px 0px'}} modifier='cta'>Save and Close</Ons.Button>
-              <Ons.Button  onClick={this.actionCancel.bind(this)} style={{margin: '10px 0px 0px 10px'}} modifier='outline'>Cancel</Ons.Button>
-            </section>
-          </section>
-        </Ons.Page>
-      )
-    }
-    else if (actions.cancel === true) {
-      return (<MyTab title='Recipe Box' key='content-home' />)
-    }
-  }
-}
 
 class MyTab extends React.Component {
   constructor (props) {
@@ -315,14 +366,16 @@ class MyTab extends React.Component {
       }
     }
   }
+
   actionCreateNewRecipe () {
     this.setState({
       ...this.state.actions,
       actions: {
-        contentToDisplay: 'newRecipe'
+        contentToDisplay: 'recipe'
       }
     });
   }
+
   render () {
     const strPage = this.props.title.toLowerCase()
     const { actions: { contentToDisplay } } = this.state
@@ -339,10 +392,11 @@ class MyTab extends React.Component {
         )
       } else {
         return (
-          <NewRecipe />
+          <Recipe />
         )
       }
     }
+
     if (strPage === 'logs') {
       return (
         <Ons.Page renderToolbar={() => renderToolbar(this.props.title)}>
@@ -354,6 +408,7 @@ class MyTab extends React.Component {
         </Ons.Page>
       )
     }
+
     if (strPage === 'contact details') {
       return (
         <Ons.Page renderToolbar={() => renderToolbar(this.props.title)}>
@@ -363,6 +418,7 @@ class MyTab extends React.Component {
         </Ons.Page>
       )
     }
+
     return (
       <Ons.Page renderToolbar={() => renderToolbar(this.props.title)}>
         <section className="standard-margin">
